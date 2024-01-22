@@ -7,13 +7,12 @@ var logger = require("morgan");
 // var indexRouter = require("./routes/index");
 var dishRouter = require("./routes/dishRouter");
 var promotionRouter = require("./routes/promotionRoute");
+var leaderRouter = require("./routes/leaderRoute");
 var toppingRouter = require("./routes/toppingRouter");
 var cakeRouter = require("./routes/cakeRouter");
 
 var app = express();
 const mongoose = require("mongoose");
-const Dishes = require("./models/dishes");
-const Promotion = require("./models/promotions");
 const url = "mongodb://127.0.0.1:27017/ConFusion";
 const connect = mongoose.connect(url);
 
@@ -33,6 +32,7 @@ app.use("/dishes", dishRouter);
 app.use("/toppings", toppingRouter);
 app.use("/cakes", cakeRouter);
 app.use("/promotions", promotionRouter);
+app.use("/leaders", leaderRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
