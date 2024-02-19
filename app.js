@@ -9,6 +9,7 @@ var dishRouter = require("./routes/dishRouter");
 var promotionRouter = require("./routes/promotionRoute");
 var leaderRouter = require("./routes/leaderRoute");
 var toppingRouter = require("./routes/toppingRouter");
+var youtubeRouter = require("./routes/youtubeRouter");
 var cakeRouter = require("./routes/cakeRouter");
 
 var app = express();
@@ -23,16 +24,54 @@ app.set("view engine", "jade");
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(cookieParser("18102002"));
+function auth(req, res, next) {
+  if (!req.signedCookies.user) {
+    var authHeader = req.headers.authorization;
+    if (!authHeader) {
+      var err = new Error("You are not authenticated!");
+      res.setHeader("WWW-Authenticate", "Basic");
+      err.status = 401;
+      next(err);
+      return;
+    }
+    var auth = new Buffer.from(authHeader.split(" ")[1], "base64")
+      .toString()
+      .split(":");
+    var user = auth[0];
+    var pass = auth[1];
+    if (user == "admin" && pass == "password") {
+      res.cookie("user", "admin", { signed: true });
+      next(); // authorized
+    } else {
+      var err = new Error("You are not authenticated!");
+      res.setHeader("WWW-Authenticate", "Basic");
+      err.status = 401;
+      next(err);
+    }
+  } else {
+    if (req.signedCookies.user === "admin") {
+      next();
+    } else {
+      var err = new Error("You are not authenticated!");
+      err.status = 401;
+      next(err);
+    }
+  }
+}
+
 // app.use("/", indexRouter);
+app.use(auth);
 
 app.use("/dishes", dishRouter);
 app.use("/toppings", toppingRouter);
-app.use("/cakes", cakeRouter);
 app.use("/promotions", promotionRouter);
 app.use("/leaders", leaderRouter);
+app.use("/youtubes", youtubeRouter);
+app.use("/cakes", cakeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

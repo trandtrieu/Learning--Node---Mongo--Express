@@ -2,31 +2,31 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const Leaders = require("../models/leaders");
-const leaderRouter = express.Router();
-leaderRouter.use(bodyParser.json());
-leaderRouter
+const Youtubes = require("../models/youtubes");
+const youtubeRouter = express.Router();
+youtubeRouter.use(bodyParser.json());
+youtubeRouter
   .route("/")
   .get((req, res, next) => {
-    Leaders.find({})
+    Youtubes.find({})
       .then(
-        (leaders) => {
+        (dishes) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.json(leaders);
+          res.json(dishes);
         },
         (err) => next(err)
       )
       .catch((err) => next(err));
   })
   .post((req, res, next) => {
-    Leaders.create(req.body)
+    Youtubes.create(req.body)
       .then(
-        (leader) => {
-          console.log("Leader created", leader);
+        (youtube) => {
+          console.log("Youtube created", youtube);
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.json(leader);
+          res.json(youtube);
         },
         (err) => next(err)
       )
@@ -35,10 +35,10 @@ leaderRouter
 
   .put((req, res, next) => {
     res.statusCode = 403;
-    res.end("PUT operation not supported on /leaders");
+    res.end("PUT operation not supported on /dishes");
   })
   .delete((req, res, next) => {
-    Leaders.deleteMany({})
+    Youtubes.deleteMany({})
       .then(
         (resp) => {
           res.statusCode = 200;
@@ -50,16 +50,16 @@ leaderRouter
       .catch((err) => next(err));
   });
 
-leaderRouter
-  .route("/:leaderId")
+youtubeRouter
+  .route("/:youtubeId")
 
   .get((req, res, next) => {
-    Leaders.findById(req.params.leaderId)
+    Youtubes.findById(req.params.youtubeId)
       .then(
-        (leader) => {
+        (dish) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.json(leader);
+          res.json(dish);
         },
         (err) => next(err)
       )
@@ -68,28 +68,28 @@ leaderRouter
 
   .post((req, res, next) => {
     res.statusCode = 403;
-    res.end("post opreration not support on /leaders/" + req.params.leaderId);
+    res.end("post opreration not support on /youtubes/" + req.params.youtubeId);
   })
   .put((req, res, next) => {
-    Leaders.findByIdAndUpdate(
-      req.params.leaderId,
+    Youtubes.findByIdAndUpdate(
+      req.params.youtubeId,
       {
         $set: req.body,
       },
       { new: true }
     )
       .then(
-        (leader) => {
+        (dish) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.json(leader);
+          res.json(dish);
         },
         (err) => next(err)
       )
       .catch((err) => next(err));
   })
   .delete((req, res, next) => {
-    Leaders.findByIdAndDelete(req.params.leaderId).then(
+    Youtubes.findByIdAndDelete(req.params.youtubeId).then(
       (resp) => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
@@ -99,4 +99,4 @@ leaderRouter
     );
   });
 
-module.exports = leaderRouter;
+module.exports = youtubeRouter;
