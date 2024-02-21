@@ -5,7 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var session = require("express-session");
 var FileStore = require("session-file-store")(session);
-
+var config = require("./config");
 var passport = require("passport");
 var authenticate = require("./models/authenticate");
 
@@ -20,7 +20,7 @@ var userRouter = require("./routes/userRouter");
 
 var app = express();
 const mongoose = require("mongoose");
-const url = "mongodb://127.0.0.1:27017/ConFusion";
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 // view engine setup
@@ -48,20 +48,20 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-function auth(req, res, next) {
-  console.log(req.user);
+// function auth(req, res, next) {
+//   console.log(req.user);
 
-  if (!req.user) {
-    var err = new Error("You are not authenticated!");
-    err.status = 403;
-    next(err);
-  } else {
-    next();
-  }
-}
+//   if (!req.user) {
+//     var err = new Error("You are not authenticated!");
+//     err.status = 403;
+//     next(err);
+//   } else {
+//     next();
+//   }
+// }
 
 app.use("/users", userRouter);
-app.use(auth);
+// app.use(auth);
 
 app.use("/dishes", dishRouter);
 app.use("/toppings", toppingRouter);
