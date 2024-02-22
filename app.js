@@ -9,7 +9,6 @@ var config = require("./config");
 var passport = require("passport");
 var authenticate = require("./models/authenticate");
 
-// var indexRouter = require("./routes/index");
 var dishRouter = require("./routes/dishRouter");
 var promotionRouter = require("./routes/promotionRoute");
 var leaderRouter = require("./routes/leaderRoute");
