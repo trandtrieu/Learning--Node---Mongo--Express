@@ -16,7 +16,7 @@ var toppingRouter = require("./routes/toppingRouter");
 var youtubeRouter = require("./routes/youtubeRouter");
 var cakeRouter = require("./routes/cakeRouter");
 var userRouter = require("./routes/userRouter");
-
+const uploadRouter = require("./routes/uploadRouter");
 var app = express();
 const mongoose = require("mongoose");
 const url = config.mongoUrl;
@@ -61,7 +61,7 @@ app.use(passport.session());
 
 app.use("/users", userRouter);
 // app.use(auth);
-
+app.use("/imageUpload", uploadRouter);
 app.use("/dishes", dishRouter);
 app.use("/toppings", toppingRouter);
 app.use("/promotions", promotionRouter);
