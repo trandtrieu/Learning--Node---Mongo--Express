@@ -47,18 +47,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// function auth(req, res, next) {
-//   console.log(req.user);
-
-//   if (!req.user) {
-//     var err = new Error("You are not authenticated!");
-//     err.status = 403;
-//     next(err);
-//   } else {
-//     next();
-//   }
-// }
-
 app.use("/users", userRouter);
 // app.use(auth);
 app.use("/imageUpload", uploadRouter);
@@ -93,5 +81,15 @@ connect.then(
     console.log(err);
   }
 );
+app.all("*", (req, res, next) => {
+  if (req.secure) {
+    return next();
+  } else {
+    res.redirect(
+      307,
+      "https://" + req.hostname + ":" + app.get("secPort") + req.url
+    );
+  }
+});
 
 module.exports = app;
