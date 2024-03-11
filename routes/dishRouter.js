@@ -6,10 +6,11 @@ const dishRouter = express.Router();
 dishRouter.use(bodyParser.json());
 var authenticate = require("../models/authenticate");
 const cors = require("cors");
+dishRouter.options("/", cors());
 
 dishRouter
   .route("/")
-  .get((req, res, next) => {
+  .get(cors(), (req, res, next) => {
     Dishes.find({})
       .populate("comments.author")
       .then(
@@ -24,19 +25,24 @@ dishRouter
   })
 
   // .post(authenticate.verifyUser, (req, res, next) => {
-  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    Dishes.create(req.body)
-      .then(
-        (dish) => {
-          console.log("Dish created", dish);
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(dish);
-        },
-        (err) => next(err)
-      )
-      .catch((err) => next(err));
-  })
+  .post(
+    cors(),
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      Dishes.create(req.body)
+        .then(
+          (dish) => {
+            console.log("Dish created", dish);
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json(dish);
+          },
+          (err) => next(err)
+        )
+        .catch((err) => next(err));
+    }
+  )
 
   .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;

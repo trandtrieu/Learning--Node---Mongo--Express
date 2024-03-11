@@ -16,6 +16,9 @@ var toppingRouter = require("./routes/toppingRouter");
 var youtubeRouter = require("./routes/youtubeRouter");
 var cakeRouter = require("./routes/cakeRouter");
 var userRouter = require("./routes/userRouter");
+var quizRouter = require("./routes/quizRouter");
+var questionRouter = require("./routes/questionRouter");
+
 const uploadRouter = require("./routes/uploadRouter");
 var app = express();
 const mongoose = require("mongoose");
@@ -56,6 +59,8 @@ app.use("/promotions", promotionRouter);
 app.use("/leaders", leaderRouter);
 app.use("/youtubes", youtubeRouter);
 app.use("/cakes", cakeRouter);
+app.use("/quizzes", quizRouter);
+app.use("/questions", questionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
