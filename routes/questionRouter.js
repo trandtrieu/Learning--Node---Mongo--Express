@@ -31,21 +31,8 @@ questionRouter
         (err) => next(err)
       )
       .catch((err) => next(err));
-  })
-  .post(async (req, res) => {
-    const question = new Question({
-      text: req.body.text,
-      options: req.body.options,
-      keywords: req.body.keywords,
-      correctAnswerIndex: req.body.correctAnswerIndex,
-    });
-    try {
-      const newQuestion = await question.save();
-      res.status(201).json(newQuestion);
-    } catch (err) {
-      res.status(400).json({ message: err.message });
-    }
   });
+
 questionRouter
   .route("/:questionId")
   .get((req, res, next) => {
@@ -55,6 +42,24 @@ questionRouter
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
           res.json(question);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
+  })
+  .put(authenticate.verifyUser, (req, res, next) => {
+    Question.findByIdAndUpdate(
+      req.params.questionId,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    )
+      .then(
+        (dish) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(dish);
         },
         (err) => next(err)
       )

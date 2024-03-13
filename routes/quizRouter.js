@@ -43,6 +43,24 @@ quizRouter
     const quiz = await Quiz.findById(req.params.quizId).populate("questions");
     res.json(quiz);
   })
+  .put(authenticate.verifyUser, (req, res, next) => {
+    Quiz.findByIdAndUpdate(
+      req.params.quizId,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    )
+      .then(
+        (dish) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(dish);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
+  })
   .delete(authenticate.verifyUser, (req, res, next) => {
     Quiz.findByIdAndDelete(req.params.quizId)
       .then((deletedQuizz) => {
@@ -56,5 +74,45 @@ quizRouter
       })
       .catch((err) => next(err));
   });
+
+quizRouter.route("/:quizId/populate").get((req, res, next) => {
+  const keyword = req.query.keyword;
+
+  const regexKeyword = new RegExp(keyword, "i");
+
+  Quiz.findById(req.params.quizId)
+    .populate({
+      path: "questions",
+      match: {
+        text: { $regex: regexKeyword },
+      },
+    })
+    .then((quiz) => {
+      if (!quiz) {
+        const err = new Error("Quiz not found");
+        err.status = 404;
+        throw err;
+      }
+      res.status(200);
+      res.setHeader("Content-Type", "application/json");
+      res.json(quiz);
+    });
+});
+
+quizRouter.route("/:quizId/populate2").get((req, res, next) => {
+  Quiz.findById(req.params.quizId)
+    .populate({ path: "questions", match: { text: { $regex: /periodic/i } } })
+
+    .then((quiz) => {
+      if (!quiz) {
+        const err = new Error("Quiz not found");
+        err.status = 404;
+        throw err;
+      }
+      res.status(200);
+      res.setHeader("Content-Type", "application/json");
+      res.json(quiz);
+    });
+});
 
 module.exports = quizRouter;
